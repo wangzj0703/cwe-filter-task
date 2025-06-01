@@ -1,6 +1,7 @@
 import pandas as pd
 import argparse
 import sys
+import re
 
 def main():
     parser = argparse.ArgumentParser(description="Filter CWE data by programming language(s)")
@@ -52,16 +53,30 @@ def main():
         sys.exit(0)
 
     # 输出每条记录，格式友好
+
     for idx, row in filtered.iterrows():
         print(f"CWE-ID: {row['CWE-ID']}")
         print(f"Name: {row['Name']}")
         print(f"Description: {row['Description']}")
         examples = row['Observed Examples']
-        if pd.notna(examples):
-            print("Observed Examples:")
-            for ex in str(examples).split("::"):
-                if ex.strip():
-                    print(f"    - {ex.strip()}")
+        if pd.notna(examples) and examples.strip():
+            items = [ex.strip() for ex in str(examples).split("::") if ex.strip()]
+            if items:
+                print("Observed Examples:")
+                for i, ex in enumerate(items, 1):
+                    print(f"  Example {i}:")
+                    # 匹配形如 "KEY:val:KEY:val..." 这种结构
+                    pattern = r'([A-Z_]+):\s*(.*?)(?=:[A-Z_]+:|$)'
+                    matches = re.findall(pattern, ex)
+                    if matches:
+                        for key, val in matches:
+                            print(f"    {key.strip()}: {val.strip()}")
+                    else:
+                        # 如果没有结构化属性，原样输出
+                        for line in ex.splitlines():
+                            print(f"    {line.strip()}")
+            else:
+                print("Observed Examples: None")
         else:
             print("Observed Examples: None")
         print("-" * 60)
