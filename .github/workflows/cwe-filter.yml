@@ -36,7 +36,7 @@ jobs:
           eval $CMD > filtered_cwe.txt
 
       - name: Upload filtered_cwe.txt as CI artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: CWE-filter-result
           path: filtered_cwe.txt
