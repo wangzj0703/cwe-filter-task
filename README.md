@@ -20,7 +20,7 @@ Install dependencies:
 
 ```bash
 pip install -r requirements.txt
-
+```
 ## Usage
 
 ### Filter by any language (OR mode, default)
@@ -29,15 +29,16 @@ Outputs all CWE records that are applicable to **at least one** of the specified
 
 ```bash
 python filter_cwe.py --languages "Python,Java"
-
+```
 ### Filter by all languages (AND mode)
 
 Outputs only CWE records that are applicable to all specified languages.
 
 ```bash
 python filter_cwe.py --languages "Python,Java" --mode and
-
+```
 ### Save output to file (for use as a CI/CD artefact)
 
 ```bash
 python filter_cwe.py --languages "Python,Java" > filtered_cwe.txt
+```
