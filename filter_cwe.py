@@ -23,7 +23,7 @@ def split_examples(examples_str):
 
 def main():
     parser = argparse.ArgumentParser(description="Filter CWE data by programming language(s)")
-    parser.add_argument('--languages', type=str, required=True,default='Java, Python',
+    parser.add_argument('--languages', type=str, required=True,
                         help='Comma-separated language names (e.g. "Python,C#,PHP")')
     parser.add_argument('--input', type=str, default='699.csv',
                         help='Input CWE csv file (default: 699.csv)')
