@@ -1,4 +1,4 @@
-name: CWE Filter CI
+name: cwe-filter-task-csv&txt
 
 on:
   workflow_dispatch:
