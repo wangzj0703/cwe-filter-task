@@ -11,12 +11,13 @@ def main():
                         help='Input CWE csv file (default: 699.csv)')
     parser.add_argument('--mode', type=str, default='or', choices=['or', 'and'],
                         help="Filter mode: 'or' (default) matches any language; 'and' matches only if all languages are present")
+    parser.add_argument('--output', type=str, default="filtered_cwe.txt", help="Output file path")
     args = parser.parse_args()
 
-    # 解析语言参数，去除首尾空格
+    # 
     language_list = [lang.strip().lower() for lang in args.languages.split(",")]
 
-    # 读取CSV数据
+    # 读取CSV
     try:
         df = pd.read_csv(args.input, index_col=False)
         df.columns = df.columns.str.strip()
@@ -52,34 +53,33 @@ def main():
         print("No records found for the specified languages.", file=sys.stderr)
         sys.exit(0)
 
-    # 输出每条记录，格式友好
-
-    for idx, row in filtered.iterrows():
-        print(f"CWE-ID: {row['CWE-ID']}")
-        print(f"Name: {row['Name']}")
-        print(f"Description: {row['Description']}")
-        examples = row['Observed Examples']
-        if pd.notna(examples) and examples.strip():
-            items = [ex.strip() for ex in str(examples).split("::") if ex.strip()]
-            if items:
-                print("Observed Examples:")
-                for i, ex in enumerate(items, 1):
-                    print(f"  Example {i}:")
-                    # 匹配形如 "KEY:val:KEY:val..." 这种结构
-                    pattern = r'([A-Z_]+):\s*(.*?)(?=:[A-Z_]+:|$)'
-                    matches = re.findall(pattern, ex)
-                    if matches:
-                        for key, val in matches:
-                            print(f"    {key.strip()}: {val.strip()}")
-                    else:
-                        # 如果没有结构化属性，原样输出
-                        for line in ex.splitlines():
-                            print(f"    {line.strip()}")
+    # 输出到文件
+    with open(args.output, "w", encoding="utf-8") as f:
+        for idx, row in filtered.iterrows():
+            f.write(f"CWE-ID: {row['CWE-ID']}\n")
+            f.write(f"Name: {row['Name']}\n")
+            f.write(f"Description: {row['Description']}\n")
+            examples = row['Observed Examples']
+            if pd.notna(examples) and examples.strip():
+                items = [ex.strip() for ex in str(examples).split("::") if ex.strip()]
+                if items:
+                    f.write("Observed Examples:\n")
+                    for i, ex in enumerate(items, 1):
+                        f.write(f"  Example {i}:\n")
+                        pattern = r'([A-Z_]+):\s*(.*?)(?=:[A-Z_]+:|$)'
+                        matches = re.findall(pattern, ex)
+                        if matches:
+                            for key, val in matches:
+                                f.write(f"    {key.strip()}: {val.strip()}\n")
+                        else:
+                            for line in ex.splitlines():
+                                f.write(f"    {line.strip()}\n")
+                else:
+                    f.write("Observed Examples: None\n")
             else:
-                print("Observed Examples: None")
-        else:
-            print("Observed Examples: None")
-        print("-" * 60)
+                f.write("Observed Examples: None\n")
+            f.write("-" * 60 + "\n")
+    print(f"[INFO] Output written to {args.output}")
 
 if __name__ == "__main__":
     main()
