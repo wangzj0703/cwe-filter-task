@@ -114,7 +114,7 @@ def main():
         csv_outfile = args.output + '.csv'
 
     # 4. 导出csv，cell内多行
-    csv_df.to_csv(csv_outfile, index=False, encoding="utf-8", line_terminator='\n')
+    csv_df.to_csv(csv_outfile, index=False, encoding="utf-8")
     print(f"[INFO] CSV Output written to {csv_outfile} (examples are line-split in single cell)")
 
 if __name__ == "__main__":
