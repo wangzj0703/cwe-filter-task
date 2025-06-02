@@ -1,6 +1,12 @@
 name: cwe-filter-task-csv&txt
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       languages:
