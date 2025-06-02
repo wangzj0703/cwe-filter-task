@@ -53,7 +53,7 @@ def test_no_match_language():
         ["python", SCRIPT, "--languages", "TotallyFakeLang", "--output", outfile],
         capture_output=True, text=True
     )
-    # 应该输出 no records found 到stderr
+    # output to stderr
     assert "no records found" in result.stderr.lower()
     if os.path.exists(outfile):
         os.remove(outfile)
@@ -63,4 +63,4 @@ def test_invalid_argument():
         ["python", SCRIPT],
         capture_output=True, text=True
     )
-    assert result.returncode != 0  # 参数缺失时应该报错
+    assert result.returncode != 0  # for missing parameters

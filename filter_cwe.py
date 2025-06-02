@@ -4,7 +4,7 @@ import sys
 import re
 
 def split_examples(examples_str):
-    # 分割并美化每个example
+    # split and format each Observed Examples
     if pd.isna(examples_str) or not str(examples_str).strip():
         return []
     items = [ex.strip() for ex in str(examples_str).split("::") if ex.strip()]
@@ -32,10 +32,10 @@ def main():
     parser.add_argument('--output', type=str, default="filtered_cwe.txt", help="Output file path")
     args = parser.parse_args()
 
-    # 解析语言参数，去除首尾空格
+    # Parse and trim
     language_list = [lang.strip().lower() for lang in args.languages.split(",")]
 
-    # 读取CSV数据
+    # read CSV
     try:
         df = pd.read_csv(args.input, index_col=False)
         df.columns = df.columns.str.strip()
@@ -43,7 +43,7 @@ def main():
         print(f"Error reading file {args.input}: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # 必要字段校验
+    # validate
     required_columns = ['CWE-ID', 'Name', 'Description', 'Applicable Platforms', 'Observed Examples']
     for col in required_columns:
         if col not in df.columns:
@@ -51,7 +51,7 @@ def main():
             print(f"Available columns: {df.columns.tolist()}", file=sys.stderr)
             sys.exit(1)
 
-    # 匹配方式
+    # match mode
     if args.mode == 'and':
         def language_match(cell):
             if pd.isna(cell):
@@ -71,7 +71,7 @@ def main():
         print("No records found for the specified languages.", file=sys.stderr)
         sys.exit(0)
 
-    # -------- TXT输出 --------
+    # for txt output
     with open(args.output, "w", encoding="utf-8") as f:
         for idx, row in filtered.iterrows():
             f.write(f"CWE-ID: {row['CWE-ID']}\n")
@@ -91,15 +91,15 @@ def main():
             f.write("-" * 60 + "\n")
     print(f"[INFO] Output written to {args.output}")
 
-    # -------- CSV输出：每个example一行分割在同一个cell --------
-    # 1. 构造分行显示的examples列
+    # for CSV output
+    # 1. example column
     examples_column = []
     for ex in filtered["Observed Examples"]:
         ex_list = split_examples(ex)
         joined = "\n".join(ex_list) if ex_list else ""
         examples_column.append(joined)
 
-    # 2. 构建DataFrame
+    #
     csv_df = pd.DataFrame({
         "CWE-ID": filtered["CWE-ID"],
         "Name": filtered["Name"],
@@ -107,15 +107,15 @@ def main():
         "Observed Examples": examples_column
     })
 
-    # 3. 自动拼csv文件名
+    # csv file name
     if args.output.endswith('.txt'):
         csv_outfile = args.output[:-4] + '.csv'
     else:
         csv_outfile = args.output + '.csv'
 
-    # 4. 导出csv，cell内多行
+    #
     csv_df.to_csv(csv_outfile, index=False, encoding="utf-8")
-    print(f"[INFO] CSV Output written to {csv_outfile} (examples are line-split in single cell)")
+    print(f"[INFO] CSV Output written to {csv_outfile} ")
 
 if __name__ == "__main__":
     main()
