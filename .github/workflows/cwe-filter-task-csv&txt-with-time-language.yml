@@ -1,0 +1,54 @@
+name: CWE Filter CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      languages:
+        description: 'Comma-separated programming languages (e.g. Java,Python,C#)'
+        required: true
+        default: 'Java,Python'
+      mode:
+        description: 'Filter mode (or/and)'
+        required: true
+        default: 'or'
+
+jobs:
+  filter-cwe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build filtered_cwe output filename
+        id: fname
+        run: |
+          LANGS=$(echo "${{ github.event.inputs.languages }}" | tr '[:upper:]' '[:lower:]' | tr ',' '_')
+          OUTNAME="filtered_cwe_${LANGS}_${{ github.event.inputs.mode }}_$(date +%Y%m%d_%H%M%S).txt"
+          echo "OUTNAME=$OUTNAME" >> $GITHUB_ENV
+
+      - name: Run CWE Filter Script (custom params)
+        run: |
+          python filter_cwe.py --languages "${{ github.event.inputs.languages }}" --mode "${{ github.event.inputs.mode }}" --output "$OUTNAME"
+
+      - name: Upload TXT artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.OUTNAME }}
+          path: ${{ env.OUTNAME }}
+
+      - name: Upload CSV artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.OUTNAME }}_csv
+          path: ${{ env.OUTNAME%.txt}}.csv
+
+      - name: (Optional) Run tests
+        run: pytest tests/
