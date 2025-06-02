@@ -1,4 +1,4 @@
-name: cwe-filter-task-csv&txt
+name: CWE Filter CI
 
 on:
   workflow_dispatch:
@@ -27,12 +27,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build filtered_cwe output filename
+      - name: Build filtered_cwe output filenames
         id: fname
         run: |
           LANGS=$(echo "${{ github.event.inputs.languages }}" | tr '[:upper:]' '[:lower:]' | tr ',' '_')
           OUTNAME="filtered_cwe_${LANGS}_${{ github.event.inputs.mode }}_$(date +%Y%m%d_%H%M%S).txt"
+          CSVNAME="${OUTNAME%.txt}.csv"
           echo "OUTNAME=$OUTNAME" >> $GITHUB_ENV
+          echo "CSVNAME=$CSVNAME" >> $GITHUB_ENV
 
       - name: Run CWE Filter Script (custom params)
         run: |
@@ -47,8 +49,8 @@ jobs:
       - name: Upload CSV artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.OUTNAME }}_csv
-          path: ${{ env.OUTNAME%.txt}}.csv
+          name: ${{ env.CSVNAME }}
+          path: ${{ env.CSVNAME }}
 
       - name: (Optional) Run tests
         run: pytest tests/
