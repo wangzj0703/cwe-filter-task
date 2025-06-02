@@ -1,0 +1,14 @@
+CWE-ID,Name,Description,Observed Examples
+396,Declaration of Catch for Generic Exception,Catching overly broad exceptions promotes complex error handling code that is more likely to contain security vulnerabilities.,
+397,Declaration of Throws for Generic Exception,The product throws or raises an overly broad exceptions that can hide important details and produce inappropriate responses to certain conditions.,
+478,Missing Default Case in Multiple Condition Expression,"The code does not have a default case in an expression with multiple conditions, such as a switch statement.",
+502,Deserialization of Untrusted Data,The product deserializes untrusted data without sufficiently ensuring that the resulting data will be valid.,"REFERENCE: CVE-2019-12799 | DESCRIPTION: chain: bypass of untrusted deserialization issue (CWE-502) by using an assumed-trusted class (CWE-183) | LINK: https://www.cve.org/CVERecord?id=CVE-2019-12799
+REFERENCE: CVE-2015-8103 | DESCRIPTION: Deserialization issue in commonly-used Java library allows remote execution. | LINK: https://www.cve.org/CVERecord?id=CVE-2015-8103
+REFERENCE: CVE-2015-4852 | DESCRIPTION: Deserialization issue in commonly-used Java library allows remote execution. | LINK: https://www.cve.org/CVERecord?id=CVE-2015-4852
+REFERENCE: CVE-2013-1465 | DESCRIPTION: Use of PHP unserialize function on untrusted input allows attacker to modify application configuration. | LINK: https://www.cve.org/CVERecord?id=CVE-2013-1465
+REFERENCE: CVE-2012-3527 | DESCRIPTION: Use of PHP unserialize function on untrusted input in content management system might allow code execution. | LINK: https://www.cve.org/CVERecord?id=CVE-2012-3527
+REFERENCE: CVE-2012-0911 | DESCRIPTION: Use of PHP unserialize function on untrusted input in content management system allows code execution using a crafted cookie value. | LINK: https://www.cve.org/CVERecord?id=CVE-2012-0911
+REFERENCE: CVE-2012-0911 | DESCRIPTION: Content management system written in PHP allows unserialize of arbitrary objects, possibly allowing code execution. | LINK: https://www.cve.org/CVERecord?id=CVE-2012-0911
+REFERENCE: CVE-2011-2520 | DESCRIPTION: Python script allows local users to execute code via pickled data. | LINK: https://www.cve.org/CVERecord?id=CVE-2011-2520
+REFERENCE: CVE-2012-4406 | DESCRIPTION: Unsafe deserialization using pickle in a Python script. | LINK: https://www.cve.org/CVERecord?id=CVE-2012-4406
+REFERENCE: CVE-2003-0791 | DESCRIPTION: Web browser allows execution of native methods via a crafted string to a JavaScript function that deserializes the string. | LINK: https://www.cve.org/CVERecord?id=CVE-2003-0791"
